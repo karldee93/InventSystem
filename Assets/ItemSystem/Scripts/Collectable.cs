@@ -2,17 +2,51 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Collectable : MonoBehaviour
+public class Collectable : Interactable
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void Interact() 
     {
-        
+        base.Interact();
+        Pickup();
+    }
+    
+    public override void Interact(Interactor interactor) 
+    {
+        base.Interact(interactor);
+        Pickup();
     }
 
-    // Update is called once per frame
-    void Update()
+    void Pickup()
     {
-        
+        Debug.Log("Picked up " + transform.name);
+
+        if (itemObject.useOnPickup)
+        {
+            Use();
+        }
+        else
+        {
+            Store();
+        }
+    }
+    void Store()
+    {
+        if(interactor != null)
+        {
+            interactor.PutInStorage(itemObject, quantity);
+            Destory(gameObject);
+        }
+    }
+
+    void Use()
+    {
+        if (itemObject.consumable)
+        {
+            quantity--;
+            if (quantity <= 0)
+            {
+                Destory(gameObject);
+            }
+        }
     }
 }
